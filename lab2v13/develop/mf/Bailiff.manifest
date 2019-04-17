@@ -1,0 +1,2 @@
+Main-Class: tag.bailiff.Bailiff
+Class-Path: util.jar jini-core.jar jini-ext.jar reggie-dl.jar

@@ -1,0 +1,2 @@
+Main-Class: tag.dexter.Dexter
+Class-Path: util.jar Bailiff-dl.jar jini-core.jar jini-ext.jar reggie-dl.jar

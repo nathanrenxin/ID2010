@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Build file for assignment TAG. -->
+<!-- 2018-08-20/fki Refactored for version 13 -->
+
+<!-- ***************************************************************** -->
+
+<!-- Define project name, and default target.
+     Target "all" is run if no target is specified when run. -->
+
+<project basedir="." name="tag" default="all">
+
+  <!-- Define variables that we use later on -->
+  <property name="dextercapsname"  value="Dexter"/>
+  <property name="bailiffcapsname" value="Bailiff"/>
+
+  <!-- Define locations for source and build trees -->
+  <property name="dir.build"    location="build"/>
+  <property name="dir.dist"     location="dist"/>
+  <property name="dir.src"      location="src"/>
+  <property name="dir.manifest" location="mf"/>
+
+  <!-- Define the total classpath for the project -->
+  <path id="project.class.path">
+    <!-- Include all JAR-files in the lib directory -->
+    <fileset dir="lib">
+      <include name="**/*.jar"/>
+    </fileset>
+  </path>
+
+  <target name="init" description="Create build-directories">
+    <!-- Create the build and dist directories if they dont exist. -->
+    <mkdir dir="${dir.build}"/>
+    <mkdir dir="${dir.dist}"/>
+  </target>
+
+  <target name="compile" depends="init" description="Compile source code">
+    <!-- Compile all code in the source directory, put class files -->
+    <!-- in the build directory. -->
+    <javac debug="true"
+           deprecation="true"
+	   destdir="${dir.build}"
+	   srcdir="${dir.src}">
+      <classpath refid="project.class.path"/>
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile" description="Build JAR-files.">
+    <!-- We create three jar files. -->
+         
+    <jar basedir="${dir.build}" compress="true"
+         destfile="${dir.dist}/${dextercapsname}.jar"
+	 manifest="${dir.manifest}/${dextercapsname}.manifest"
+	 includes="**/Dexter.class
+               **/BailiffInterface.class">
+    </jar>
+
+    <jar basedir="${dir.build}" compress="true"
+         destfile="${dir.dist}/${bailiffcapsname}.jar"
+	 manifest="${dir.manifest}/${bailiffcapsname}.manifest"
+	 includes="**/Bailiff$$Agitator.class
+	           **/Bailiff$$1.class
+		   **/Bailiff.class
+		   **/Dexter.class
+		   **/BailiffInterface.class">
+    </jar>
+
+    <jar basedir="${dir.build}" compress="true"
+         destfile="${dir.dist}/${bailiffcapsname}-dl.jar"
+	 includes="**/BailiffInterface.class
+               **/Dexter.class">
+    </jar>
+
+  </target>
+
+  <!-- The default target. The dependency chain makes do all. -->
+  <target name="all" depends="jar" description="Build everything.">
+    <echo message="Application built!"/>
+  </target>
+
+  <!-- Install copies of the JAR files in the test directory. -->
+  <target name="install" depends="jar" description="Install jar-files.">
+    <!-- The cbs directory -->
+    <copy todir="../test/cbs">
+      <fileset dir="./dist">
+	<include name="${bailiffcapsname}.jar"/>
+	<include name="${bailiffcapsname}-dl.jar"/>
+	<include name="${dextercapsname}.jar"/>
+      </fileset>
+      <fileset dir="./lib">
+	<include name="*.jar"/>
+      </fileset>
+    </copy>
+    <!-- Message to user -->
+    <echo message="Test files installed!"/>
+  </target>
+
+  <!-- Clean removes all created files and directories -->
+  <target name="clean" description="Clean all buildable directories.">
+    <delete dir="${dir.dist}"/>
+    <delete dir="${dir.build}"/>
+    <delete>
+      <fileset dir="../test/cbs">
+	<include name="*.jar"/>
+      </fileset>
+    </delete>
+  </target>
+</project>
